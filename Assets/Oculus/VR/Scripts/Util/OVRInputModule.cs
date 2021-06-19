@@ -325,7 +325,7 @@ namespace UnityEngine.EventSystems
                 pointerEvent.dragging = false;
                 pointerEvent.useDragThreshold = true;
                 pointerEvent.pressPosition = pointerEvent.position;
-                if (pointerEvent.IsVRPointer())
+                if (pointerEvent.isVRPointer())
                 {
                     pointerEvent.SetSwipeStart(Input.mousePosition);
                 }
@@ -738,7 +738,7 @@ namespace UnityEngine.EventSystems
             if (!pointerEvent.useDragThreshold)
                 return true;
 
-            if (!pointerEvent.IsVRPointer())
+            if (!pointerEvent.isVRPointer())
             {
                  // Same as original behaviour for canvas based pointers
                 return (pointerEvent.pressPosition - pointerEvent.position).sqrMagnitude >= eventSystem.pixelDragThreshold * eventSystem.pixelDragThreshold;
@@ -773,7 +773,7 @@ namespace UnityEngine.EventSystems
         /// <returns></returns>
         static bool IsPointerMoving(PointerEventData pointerEvent)
         {
-            if (pointerEvent.IsVRPointer())
+            if (pointerEvent.isVRPointer())
                 return true;
             else
                 return pointerEvent.IsPointerMoving();
@@ -812,7 +812,7 @@ namespace UnityEngine.EventSystems
                 && !pointerEvent.dragging
                 && ShouldStartDrag(pointerEvent))
             {
-                if (pointerEvent.IsVRPointer())
+                if (pointerEvent.isVRPointer())
                 {
                     //adjust the position used based on swiping action. Allowing the user to
                     //drag items by swiping on the touchpad
@@ -825,7 +825,7 @@ namespace UnityEngine.EventSystems
             // Drag notification
             if (pointerEvent.dragging && moving && pointerEvent.pointerDrag != null)
             {
-                if (pointerEvent.IsVRPointer())
+                if (pointerEvent.isVRPointer())
                 {
                     pointerEvent.position = SwipeAdjustedPosition(originalPosition, pointerEvent);
                 }

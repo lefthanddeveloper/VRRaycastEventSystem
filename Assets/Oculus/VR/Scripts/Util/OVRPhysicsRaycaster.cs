@@ -90,7 +90,7 @@ namespace UnityEngine.EventSystems
             if (eventCamera == null)
                 return;
 
-            if (!eventData.IsVRPointer())
+            if (!eventData.isVRPointer())
                 return;
 
             var ray = eventData.GetRay();
@@ -131,7 +131,7 @@ namespace UnityEngine.EventSystems
             if (eventCamera == null)
                 return;
 
-            if (!eventData.IsVRPointer())
+            if (!eventData.isVRPointer())
                 return;
 
             var ray = eventData.GetRay();

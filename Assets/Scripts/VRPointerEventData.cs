@@ -32,7 +32,7 @@ namespace UnityEngine.EventSystems
 	}
 	public static class PointerEventData2Extension
 	{
-		public static bool isVRPointer(this PointerEventData pointerEventData)
+		public static bool IsVRPointer(this PointerEventData pointerEventData)
 		{
 			return (pointerEventData is VRPointerEventData);
 		}

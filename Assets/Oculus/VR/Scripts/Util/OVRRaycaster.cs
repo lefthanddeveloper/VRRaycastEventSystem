@@ -170,7 +170,7 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
     /// <param name="resultAppendList"></param>
     public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
     {
-        if (eventData.IsVRPointer())
+        if (eventData.isVRPointer())
         {
             Raycast(eventData, resultAppendList, eventData.GetRay(), true);
         }
@@ -310,7 +310,7 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData e)
     {
-        if (e.IsVRPointer())
+        if (e.isVRPointer())
         {
             // Gaze has entered this canvas. We'll make it the active one so that canvas-mouse pointer can be used.
             OVRInputModule inputModule = EventSystem.current.currentInputModule as OVRInputModule;

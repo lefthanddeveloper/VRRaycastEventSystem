@@ -15,6 +15,7 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 	}
 
 	public int sortOrder = 0;
+	public float raycastDistance = 10.0f; //Max Distance that allows RaycastResult
 
 	protected VRUIRaycaster() { }
 
@@ -58,6 +59,22 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 			OVRCameraRig rig = FindObjectOfType<OVRCameraRig>();
 			canvas.worldCamera = rig.centerEyeAnchor.gameObject.GetComponent<Camera>();
 		}
+
+		DisableGraphicRaycaster();
+	
+	}
+
+	private void DisableGraphicRaycaster()
+	{
+		var graphicRaycaster = GetComponent<GraphicRaycaster>();
+		if (graphicRaycaster != null)
+		{
+			if (graphicRaycaster.enabled)
+			{
+				graphicRaycaster.enabled = false;
+				Debug.Log("Disabling Component<GraphicRaycaster> so that the mousestate won't be mixed");
+			}
+		}
 	}
 
 	[NonSerialized]
@@ -67,14 +84,15 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 	{
 		if (canvas == null) return;
 
-		float hitDistance = float.MaxValue;
+		float hitDistance = raycastDistance;
 
-		if(checkForBlocking && blockingObjects != BlockingObjects.None)
+		if (checkForBlocking && blockingObjects != BlockingObjects.None)
 		{
-			float dist = eventCamera.farClipPlane;
-			if(blockingObjects == BlockingObjects.ThreeD || blockingObjects == BlockingObjects.All)
+			//float dist = eventCamera.farClipPlane;
+			//float dist = raycastDistance;
+			if (blockingObjects == BlockingObjects.ThreeD || blockingObjects == BlockingObjects.All)
 			{
-				var hits = Physics.RaycastAll(ray, dist, m_BlockingMask);
+				var hits = Physics.RaycastAll(ray, raycastDistance, m_BlockingMask);
 				if(hits.Length > 0 && hits[0].distance < hitDistance)
 				{
 					hitDistance = hits[0].distance;
@@ -82,10 +100,10 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 			}
 			if(blockingObjects == BlockingObjects.TwoD || blockingObjects == BlockingObjects.All)
 			{
-				var hits = Physics2D.GetRayIntersectionAll(ray, dist, m_BlockingMask);
-				if(hits.Length >0 && hits[0].fraction * dist < hitDistance)
+				var hits = Physics2D.GetRayIntersectionAll(ray, raycastDistance, m_BlockingMask);
+				if(hits.Length >0 && hits[0].fraction * raycastDistance < hitDistance)
 				{
-					hitDistance = hits[0].fraction * dist;
+					hitDistance = hits[0].fraction * raycastDistance;
 				}
 			}
 		}
@@ -135,7 +153,18 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 		}
 	}
 
-	//여기까지 했음 이어서...
+	public Vector2 GetScreenPosition(RaycastResult raycastResult)
+	{
+		return eventCamera.WorldToScreenPoint(raycastResult.worldPosition);
+	}
+
+	public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
+	{
+		if(eventData.IsVRPointer())
+		{
+			Raycast(eventData, resultAppendList, eventData.GetRayData(), true);
+		}
+	}
 
 	[NonSerialized]
 	static readonly List<RaycastHit> s_SortedGraphics = new List<RaycastHit>();
@@ -204,7 +233,14 @@ public class VRUIRaycaster : GraphicRaycaster, IPointerEnterHandler
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		
+		if(eventData.IsVRPointer())
+		{
+			VRInputModule inputModule = EventSystem.current.currentInputModule as VRInputModule;		
+			if (inputModule != null)
+			{
+				inputModule.activeGraphicRaycaster = this;
+			}
+		}
 	}
 }
 
